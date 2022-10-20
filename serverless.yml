@@ -1,0 +1,77 @@
+app: test-users
+service: test-users
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  stage: local
+  region: eu-west-3
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:DescribeTable
+        - dynamodb:BatchWriteItem
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:*:*:*"
+  tracing:
+    lambda: true
+  deploymentBucket:
+    name: serverless.${self:provider.region}.${opt:stage, self:provider.stage}.deploys
+  environment:
+    USER_TABLE: ${self:custom.userTable}
+    LOCAL_DYNAMODB_PORT: ${self:custom.dynamodb.start.port}
+    DOMAIN_NAME: ${self:custom.customDomain.domainName}
+
+plugins:
+  - serverless-domain-manager
+  - serverless-dynamodb-local
+  - serverless-offline
+package:
+  individually: true
+
+functions:
+  graphql:
+    handler: src/index.graphqlHandler
+    tags:
+      VERSION: ${env:VERSION, "1.0.0"}
+      CI_PROJECT_ID: ${env:CI_PROJECT_ID, self:app}
+    events:
+      - http:
+          path: "graphql"
+          method: any
+          cors: true
+
+resources:
+  Resources:
+    UserTable: ${file(src/db/user.yml):UserTable}
+
+custom:
+  serverless-offline:
+    httpPort: 4001
+    lambdaPort: 4101
+    websocketPort: 4201
+  dynamodb:
+    stages:
+      - local
+    start:
+      seed: true
+      migrate: true
+      port: 8001
+    seed:
+      local:
+        sources:
+          - table: ${self:custom.userTable}
+            sources: [src/db/seed.json]
+  userTable: "${self:service}-${opt:stage, self:provider.stage}"
+  customDomain:
+    domainName: ${env:PREFIX_DOMAINE_NAME, self:service}.${env:ENV_DOMAIN, 'dev.test.com'}
+    basePath: ""
+    certificateName: "*.${env:ENV_DOMAIN, 'dev.test.com'}"
+    createRoute53Record: true
+    endpointType: "regional"
+    securityPolicy: tls_1_2
