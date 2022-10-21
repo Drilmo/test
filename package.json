@@ -4,6 +4,7 @@
   "description": "",
   "scripts": {
     "start": "node ./src/index.js",
+    "standalone": "node ./src/indexStandalone.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "init-local": "npm install -g serverless",
     "pre-test-gitlab": "echo \"Voila un pre-test\"",
@@ -15,6 +16,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@apollo/server": "4.0.1",
     "@apollo/subgraph": "^2.0.5",
     "@graphql-tools/resolvers-composition": "^6.5.1",
     "apollo-server-lambda": "^3.8.2",

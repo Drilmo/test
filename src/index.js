@@ -10,13 +10,7 @@ const server = new ApolloServer({
     typeDefs,
     resolvers,
     csrfPrevention: true,
-  }),
-  context: ({ express }) => {
-    const user = express.req.headers.user
-      ? JSON.parse(express.req.headers.user)
-      : null;
-    return { user };
-  },
+  })
 });
 
 exports.graphqlHandler = server.createHandler();
