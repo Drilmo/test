@@ -1,4 +1,4 @@
-const { gql } = require("apollo-server-lambda");
+const { gql } = require("graphql-tag");
 
 const root = gql`
     extend schema

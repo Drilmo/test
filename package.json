@@ -16,7 +16,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@apollo/server": "4.0.1",
+    "apollo-server": "^3.10.3",
     "@apollo/subgraph": "^2.0.5",
     "@graphql-tools/resolvers-composition": "^6.5.1",
     "apollo-server-lambda": "^3.8.2",

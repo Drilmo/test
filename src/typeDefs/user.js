@@ -1,4 +1,4 @@
-const { gql } = require("apollo-server-lambda");
+const { gql } = require("graphql-tag");
 
 // Construct a schema, using GraphQL schema language
 const user = gql`
